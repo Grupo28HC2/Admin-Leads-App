@@ -1,7 +1,7 @@
 {
-  "vendor": "hiringcoders2021",
+  "vendor": "hiringcoders202128",
   "name": "admin-leads-app",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "title": "Leads App",
   "description": "Leads conversion viewer for VTEX HC2 Challenge #3",
   "builders": {
@@ -12,7 +12,8 @@
   },
   "dependencies": {
     "vtex.styleguide": "9.x",
-    "vtex.css-handles": "0.x"
+    "vtex.css-handles": "0.x",
+    "vtex.render-runtime": "8.x"
   },
   "registries": ["smartcheckout"],
   "policies": [],

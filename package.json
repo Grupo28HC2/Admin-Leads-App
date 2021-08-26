@@ -1,5 +1,5 @@
 {
-  "version": "0.0.1",
+  "version": "0.0.0",
   "name": "admin-leads-app",
   "private": true,
   "license": "UNLICENSED",
@@ -9,10 +9,6 @@
     "lint:locales": "intl-equalizer",
     "test": "cd ./react && yarn test"
   },
-  "intl-equalizer": {
-    "referenceLocale": "en",
-    "localeDirectory": "messages"
-  },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
@@ -21,6 +17,9 @@
   "lint-staged": {
     "*.{ts,js,tsx,jsx}": [
       "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,graphql,gql}": [
       "prettier --write"
     ],
     "*.json": [
@@ -45,5 +44,9 @@
     "prettier": "^2.2.0",
     "react-intl": "3",
     "typescript": "^3.9.6"
+  },
+  "intl-equalizer": {
+    "referenceLocale": "en",
+    "localeDirectory": "messages"
   }
 }
