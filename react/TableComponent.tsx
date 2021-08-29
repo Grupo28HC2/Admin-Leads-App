@@ -19,17 +19,17 @@ const TableComponent: FC<{ listToShow: number }> = (props: {
   listToShow: number
 }): JSX.Element => {
   const [leads, setLeads] = useState<Customer[]>([])
-  const [tableLength, setTableLength] = useState(10)
+  const [tableLength, setTableLength] = useState<number>(leads.length)
 
   const [currentPage, setCurrentPage] = useState(1)
-  const [itemsLength, setItemsLength] = useState(leads.length)
+  const [itemsLength, setItemsLength] = useState<number>(tableLength)
 
   /*   const [slicedData, setSlicedData] = useState(
     Object.keys(leads).slice(0, tableLength)
   ) */
 
-  const [currentItemFrom, setCurrentItemFrom] = useState(1)
-  const [currentItemTo, setCurrentItemTo] = useState(tableLength)
+  const [currentItemFrom, setCurrentItemFrom] = useState<number>(1)
+  const [currentItemTo, setCurrentItemTo] = useState<number>(10)
 
   const jsonSchema = {
     properties: {
@@ -99,10 +99,9 @@ const TableComponent: FC<{ listToShow: number }> = (props: {
   }
 
   function goToPage(
-    currentPageInfo: React.SetStateAction<number>,
-    currentItemFromInfo: React.SetStateAction<number>,
-    currentItemToInfo: React.SetStateAction<number>,
-
+    currentPageInfo: number,
+    currentItemFromInfo: number,
+    currentItemToInfo: number,
     slicedData: Customer[]
   ) {
     setCurrentPage(currentPageInfo)
