@@ -1,11 +1,14 @@
-/* eslint-disable max-params */
-import React, { FC, useState } from 'react'
+import React, { FC, useState, useEffect } from 'react'
 import { Layout, PageHeader, Tab, Tabs, PageBlock } from 'vtex.styleguide'
 
 import TableComponent from './TableComponent'
 
 const LeadsViewer: FC = () => {
   const [currentTab, setCurrentTab] = useState(1)
+
+  useEffect(() => {
+    setCurrentTab(currentTab)
+  }, [currentTab])
 
   return (
     <Layout fullWidth pageHeader={<PageHeader title="Leads List" />}>
@@ -23,21 +26,21 @@ const LeadsViewer: FC = () => {
                   active={currentTab === 1}
                   onClick={() => setCurrentTab(1)}
                 >
-                  <TableComponent />
+                  <TableComponent listToShow={1} />
                 </Tab>
                 <Tab
                   label="Prospects"
                   active={currentTab === 2}
                   onClick={() => setCurrentTab(2)}
                 >
-                  <TableComponent />
+                  <TableComponent listToShow={2} />
                 </Tab>
                 <Tab
                   label="Customers"
                   active={currentTab === 3}
                   onClick={() => setCurrentTab(3)}
                 >
-                  <TableComponent />
+                  <TableComponent listToShow={3} />
                 </Tab>
               </Tabs>
             </div>

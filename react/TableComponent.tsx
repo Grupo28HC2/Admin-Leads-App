@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-shadow */
 /* eslint-disable radix */
 /* eslint-disable max-params */
@@ -5,14 +6,24 @@ import React, { FC, useState, useEffect } from 'react'
 import axios from 'axios'
 import { Table, Button } from 'vtex.styleguide'
 
-const TableComponent: FC = () => {
-  const [leads, setLeads] = useState({})
+interface Customer {
+  id: string
+  email: string
+  name: string
+  telephone: string
+  prospect_date: string
+  customer_date: string
+}
+
+const TableComponent: FC<{ listToShow: number }> = (props: {
+  listToShow: number
+}): JSX.Element => {
+  const [leads, setLeads] = useState<Customer[]>([])
   const [tableLength, setTableLength] = useState(10)
 
   const [currentPage, setCurrentPage] = useState(1)
-  const [itemsLength /* , setItemsLength */] = useState(
-    Object.keys(leads).length
-  )
+  const [itemsLength, setItemsLength] = useState(leads.length)
+
   /*   const [slicedData, setSlicedData] = useState(
     Object.keys(leads).slice(0, tableLength)
   ) */
@@ -22,11 +33,6 @@ const TableComponent: FC = () => {
 
   const jsonSchema = {
     properties: {
-      id: {
-        type: 'number',
-        title: 'Id',
-        width: 50,
-      },
       name: {
         type: 'string',
         title: 'Name',
@@ -59,21 +65,24 @@ const TableComponent: FC = () => {
     baseURL: 'https://yomcu4f1tc.execute-api.us-east-2.amazonaws.com/default',
   })
 
-  useEffect(() => {
-    async function getLeads() {
-      await api.get('/leads').then((response) => {
-        setLeads(response.data.prospectos)
-      })
-    }
+  async function getLeads() {
+    await api.get('/leads').then((response) => {
+      setLeads(response.data.prospectos)
+    })
+  }
 
+  useEffect(() => {
     getLeads()
-  }, [api])
+    setItemsLength(leads.length)
+  }, [])
 
   function handleNextClick() {
     const newPage = currentPage + 1
     const itemFrom = currentItemTo + 1
     const itemTo = tableLength * newPage
-    const data = Object.keys(leads).slice(itemFrom - 1, itemTo)
+    const data = leads.slice(itemFrom - 1, itemTo)
+
+    // console.log(`next data:${data}`)
 
     goToPage(newPage, itemFrom, itemTo, data)
   }
@@ -83,8 +92,9 @@ const TableComponent: FC = () => {
     const newPage = currentPage - 1
     const itemFrom = currentItemFrom - tableLength
     const itemTo = currentItemFrom - 1
-    const data = Object.keys(leads).slice(itemFrom - 1, itemTo)
+    const data = leads.slice(itemFrom - 1, itemTo)
 
+    // console.log(`prev data: ${data}`)
     goToPage(newPage, itemFrom, itemTo, data)
   }
 
@@ -92,8 +102,8 @@ const TableComponent: FC = () => {
     currentPageInfo: React.SetStateAction<number>,
     currentItemFromInfo: React.SetStateAction<number>,
     currentItemToInfo: React.SetStateAction<number>,
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    slicedData: React.SetStateAction<Object>
+
+    slicedData: Customer[]
   ) {
     setCurrentPage(currentPageInfo)
     setCurrentItemFrom(currentItemFromInfo)
@@ -105,6 +115,20 @@ const TableComponent: FC = () => {
     setTableLength(parseInt(value))
     setCurrentItemTo(parseInt(value))
   }
+
+  useEffect(() => {
+    if (props.listToShow === 1) {
+      setLeads(leads)
+    }
+
+    if (props.listToShow === 2) {
+      setLeads(leads.filter((item: Customer) => !item.customer_date))
+    }
+
+    if (props.listToShow === 3) {
+      setLeads(leads.filter((item: Customer) => item.customer_date))
+    }
+  }, [props.listToShow])
 
   return (
     <Table
