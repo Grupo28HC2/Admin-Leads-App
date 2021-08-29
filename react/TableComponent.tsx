@@ -19,9 +19,9 @@ const TableComponent: FC<{ listToShow: number }> = (props: {
   listToShow: number
 }): JSX.Element => {
   const [leads, setLeads] = useState<Customer[]>([])
-  const [tableLength, setTableLength] = useState<number>(leads.length)
+  const [tableLength, setTableLength] = useState<number>(10)
 
-  const [currentPage, setCurrentPage] = useState(1)
+  const [currentPage, setCurrentPage] = useState<number>(1)
   const [itemsLength, setItemsLength] = useState<number>(tableLength)
 
   /*   const [slicedData, setSlicedData] = useState(
@@ -76,6 +76,11 @@ const TableComponent: FC<{ listToShow: number }> = (props: {
     setItemsLength(leads.length)
   }, [])
 
+  useEffect(() => {
+    setTableLength(leads.length)
+    setItemsLength(tableLength)
+  }, [leads, tableLength])
+
   function handleNextClick() {
     const newPage = currentPage + 1
     const itemFrom = currentItemTo + 1
@@ -118,14 +123,17 @@ const TableComponent: FC<{ listToShow: number }> = (props: {
   useEffect(() => {
     if (props.listToShow === 1) {
       setLeads(leads)
+      setItemsLength(leads.length)
     }
 
     if (props.listToShow === 2) {
       setLeads(leads.filter((item: Customer) => !item.customer_date))
+      setItemsLength(leads.length)
     }
 
     if (props.listToShow === 3) {
-      setLeads(leads.filter((item: Customer) => item.customer_date))
+      setLeads(leads.filter((item: Customer) => item.customer_date !== null))
+      setItemsLength(leads.length)
     }
   }, [props.listToShow])
 
