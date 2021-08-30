@@ -68,7 +68,7 @@ const TableComponent: FC<{ listToShow: number }> = (props: {
       ) {
         const treatedDate = parse(
           element.customer_date,
-          'yyyy-MM-dd',
+          'yyyy/MM/dd',
           new Date()
         )
 
@@ -82,7 +82,7 @@ const TableComponent: FC<{ listToShow: number }> = (props: {
       ) {
         const treatedDate = parse(
           element.prospect_date,
-          'yyyy-MM-dd',
+          'yyyy/MM/dd',
           new Date()
         )
 
