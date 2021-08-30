@@ -111,6 +111,22 @@ const TableComponent: FC<{ listToShow: number }> = (props: {
     }
   }, [props.listToShow, leads])
 
+  function emptyListText(listId: number) {
+    if (listId === 1) {
+      return 'No prospects or customers in the storefront list'
+    }
+
+    if (listId === 2) {
+      return 'Wait for prospects to register through the storefront form'
+    }
+
+    if (listId === 3) {
+      return 'No converted prospects to show yet'
+    }
+
+    return 'No data to show'
+  }
+
   return (
     <Table
       fullWidth
@@ -119,11 +135,11 @@ const TableComponent: FC<{ listToShow: number }> = (props: {
       emptyStateLabel="Attention!"
       emptyStateChildren={
         <React.Fragment>
-          <p>No leads to show.</p>
+          <p>No info to show.</p>
           <div className="pt5">
             <Button variation="secondary" size="small">
               <span className="flex align-baseline">
-                Wait for new prospects to register through the storefront form.
+                {emptyListText(props.listToShow)}
               </span>
             </Button>
           </div>
