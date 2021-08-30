@@ -1,10 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-shadow */
-/* eslint-disable radix */
-/* eslint-disable max-params */
 import React, { FC, useState, useEffect } from 'react'
 import axios from 'axios'
 import { Table, Button } from 'vtex.styleguide'
+import { format, parse } from 'date-fns'
 
 interface Customer {
   id: string
@@ -19,17 +17,7 @@ const TableComponent: FC<{ listToShow: number }> = (props: {
   listToShow: number
 }): JSX.Element => {
   const [leads, setLeads] = useState<Customer[]>([])
-  const [tableLength, setTableLength] = useState<number>(10)
-
-  const [currentPage, setCurrentPage] = useState<number>(1)
-  const [itemsLength, setItemsLength] = useState<number>(tableLength)
-
-  /*   const [slicedData, setSlicedData] = useState(
-    Object.keys(leads).slice(0, tableLength)
-  ) */
-
-  const [currentItemFrom, setCurrentItemFrom] = useState<number>(1)
-  const [currentItemTo, setCurrentItemTo] = useState<number>(10)
+  const [items, setItems] = useState<Customer[]>([])
 
   const jsonSchema = {
     properties: {
@@ -67,92 +55,67 @@ const TableComponent: FC<{ listToShow: number }> = (props: {
 
   async function getLeads() {
     await api.get('/leads').then((response) => {
-      setLeads(response.data.prospectos)
+      setLeads(formatDates(response.data.prospectos))
     })
+  }
+
+  function formatDates(data: Customer[]) {
+    data.forEach((element: Customer) => {
+      if (
+        element.customer_date !== null &&
+        element.customer_date !== undefined &&
+        element.customer_date !== ''
+      ) {
+        const treatedDate = parse(
+          element.customer_date,
+          'yyyy-MM-dd',
+          new Date()
+        )
+
+        element.customer_date = format(treatedDate, 'dd/MM/yyyy').toString()
+      }
+
+      if (
+        element.prospect_date !== null &&
+        element.prospect_date !== undefined &&
+        element.prospect_date !== ''
+      ) {
+        const treatedDate = parse(
+          element.prospect_date,
+          'yyyy-MM-dd',
+          new Date()
+        )
+
+        element.prospect_date = format(treatedDate, 'dd/MM/yyyy').toString()
+      }
+    })
+
+    return data
   }
 
   useEffect(() => {
     getLeads()
-    setItemsLength(leads.length)
   }, [])
 
   useEffect(() => {
-    setTableLength(leads.length)
-    setItemsLength(tableLength)
-  }, [leads, tableLength])
-
-  function handleNextClick() {
-    const newPage = currentPage + 1
-    const itemFrom = currentItemTo + 1
-    const itemTo = tableLength * newPage
-    const data = leads.slice(itemFrom - 1, itemTo)
-
-    // console.log(`next data:${data}`)
-
-    goToPage(newPage, itemFrom, itemTo, data)
-  }
-
-  function handlePrevClick() {
-    if (currentPage === 0) return
-    const newPage = currentPage - 1
-    const itemFrom = currentItemFrom - tableLength
-    const itemTo = currentItemFrom - 1
-    const data = leads.slice(itemFrom - 1, itemTo)
-
-    // console.log(`prev data: ${data}`)
-    goToPage(newPage, itemFrom, itemTo, data)
-  }
-
-  function goToPage(
-    currentPageInfo: number,
-    currentItemFromInfo: number,
-    currentItemToInfo: number,
-    slicedData: Customer[]
-  ) {
-    setCurrentPage(currentPageInfo)
-    setCurrentItemFrom(currentItemFromInfo)
-    setCurrentItemTo(currentItemToInfo)
-    setLeads(slicedData)
-  }
-
-  function handleRowsChange(value: string) {
-    setTableLength(parseInt(value))
-    setCurrentItemTo(parseInt(value))
-  }
-
-  useEffect(() => {
     if (props.listToShow === 1) {
-      setLeads(leads)
-      setItemsLength(leads.length)
+      setItems(leads)
     }
 
     if (props.listToShow === 2) {
-      setLeads(leads.filter((item: Customer) => !item.customer_date))
-      setItemsLength(leads.length)
+      setItems(leads?.filter((item: Customer) => !item.customer_date))
     }
 
     if (props.listToShow === 3) {
-      setLeads(leads.filter((item: Customer) => item.customer_date !== null))
-      setItemsLength(leads.length)
+      setItems(leads?.filter((item: Customer) => item.customer_date))
     }
-  }, [props.listToShow])
+  }, [props.listToShow, leads])
 
   return (
     <Table
       fullWidth
       schema={jsonSchema}
-      pagination={{
-        onNextClick: handleNextClick,
-        onPrevClick: handlePrevClick,
-        currentItemFrom,
-        currentItemTo,
-        onRowsChange: handleRowsChange,
-        totalItems: itemsLength,
-        textShowRows: 'Show rows',
-        textOf: 'of',
-        rowsOptions: [10, 50, 100],
-      }}
-      items={leads}
+      items={items}
       emptyStateLabel="Attention!"
       emptyStateChildren={
         <React.Fragment>
