@@ -1,7 +1,7 @@
 {
   "vendor": "hiringcoders202128",
   "name": "admin-leads-app",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "title": "Leads App",
   "description": "Leads conversion viewer for VTEX HC2 Challenge #3",
   "builders": {
